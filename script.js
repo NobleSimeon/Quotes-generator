@@ -7,11 +7,20 @@ const newQuoteBtn = document.querySelector(".new-quote"),
   copyBtn = document.querySelector(".copy"),
   shareBtn = document.querySelector(".share");
 
+let quote_id = "";
+
 async function updateQuote() {
   console.log("I was clciked");
   newQuoteBtn.innerText = "Loading...";
   newQuoteBtn.classList.add("active");
-  const response = await fetch("https://api.quotable.io/random");
+  let defaultEndPoint = "https://api.quotable.io/random";
+  const queryParams = new URLSearchParams(window.location.search);
+
+  if (queryParams.has("_id")) {
+    let quoteEndPoint = queryParams.get("_id");
+    defaultEndPoint = `https://api.quotable.io/quotes/${quoteEndPoint}`;
+  }
+  const response = await fetch(defaultEndPoint);
   const data = await response.json();
   if (response.ok) {
     console.log(data);
@@ -23,6 +32,7 @@ async function updateQuote() {
     quoteText.textContent = "An error occured";
     console.log(data);
   }
+  quote_id = data._id;
 }
 
 updateQuote();
@@ -31,7 +41,9 @@ newQuoteBtn.addEventListener("click", updateQuote);
 
 volumeUpBtn.addEventListener("click", () => {
   let concatenatedText;
-  concatenatedText = `"${textConcatenation().quote}." by ${textConcatenation().new_text}`;
+  concatenatedText = `"${textConcatenation().quote}." by ${
+    textConcatenation().new_text
+  }`;
   let utterance = new SpeechSynthesisUtterance();
   utterance.text = concatenatedText;
   console.log(concatenatedText);
@@ -80,6 +92,7 @@ shareBtn.addEventListener("click", () => {
   const data = {
     title: "Quote of the day",
     text: concatenatedText,
+    url: `http://127.0.0.1:5500/?_id=${quote_id}`,
   };
   navigator.share(data);
 });
