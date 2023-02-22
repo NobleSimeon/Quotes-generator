@@ -92,7 +92,7 @@ shareBtn.addEventListener("click", () => {
   const data = {
     title: "Quote of the day",
     text: concatenatedText,
-    url: `http://127.0.0.1:5500/?_id=${quote_id}`,
+    url: `https://simone-quote-gen.netlify.app/?_id=${quote_id}`,
   };
   navigator.share(data);
 });
